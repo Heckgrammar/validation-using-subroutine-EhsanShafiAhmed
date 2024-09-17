@@ -10,7 +10,12 @@
             // get the user inputs until all are valid.
             // The username should only be output once
             Console.Write("Enter first name: ");
-            firstName = Console.ReadLine();
+            firstName = Console.ReadLine()
+            if (ValidName(firstName) == false) 
+            {
+                Console.Write("Enter a valid name:  ");
+                firstName = Console.ReadLine()
+            }
             Console.Write("Enter last name: ");
             lastName = Console.ReadLine();
             Console.Write("Enter age: ");
