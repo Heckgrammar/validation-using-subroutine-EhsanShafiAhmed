@@ -7,84 +7,157 @@
             string firstName, lastName, username, password, emailAddress;
             int age;
 
-            // get the user inputs until all are valid.
-            // The username should only be output once
+          
             Console.Write("Enter first name: ");
-            firstName = Console.ReadLine()
-            if (ValidName(firstName) == false) 
+            firstName = Console.ReadLine();
+            while (!ValidName(firstName))
             {
-                Console.Write("Enter a valid name:  ");
-                firstName = Console.ReadLine()
+                Console.Write("Enter a valid first name: ");
+                firstName = Console.ReadLine();
             }
+
+        
             Console.Write("Enter last name: ");
             lastName = Console.ReadLine();
+            while (!ValidName(lastName))
+            {
+                Console.Write("Enter a valid last name: ");
+                lastName = Console.ReadLine();
+            }
+
+      
             Console.Write("Enter age: ");
             age = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Enter Password: ");
+            while (!ValidAge(age))
+            {
+                Console.Write("Enter a valid age (between 11 and 18): ");
+                age = Convert.ToInt32(Console.ReadLine());
+            }
+
+            Console.Write("Enter password: ");
             password = Console.ReadLine();
+            while (!ValidPassword(password))
+            {
+                Console.Write("Enter a valid password: ");
+                password = Console.ReadLine();
+            }
+
+
             Console.Write("Enter email address: ");
             emailAddress = Console.ReadLine();
+            while (!ValidEmail(emailAddress))
+            {
+                Console.Write("Enter a valid email address: ");
+                emailAddress = Console.ReadLine();
+            }
 
 
-            username = createUserName(firstName,lastName,age);
-            Console.WriteLine($"Username is {username}, you have successfully registered please remember your password");
-
-            //  Test your program with a range of tests to show all validation works
-            // Show your evidence in the Readme
-
+            username = CreateUserName(firstName, lastName, age);
+            Console.WriteLine($"Username is {username}, you have successfully registered. Please remember your password.");
         }
+
         static bool ValidName(string name)
         {
-            // name must be at least two characters and contain only letters
+         
+            if (name.Length < 2)
+                return false;
+
+            foreach (char c in name)
+            {
+                int asciiValue = Convert.ToInt32(c);
+                if (!(asciiValue >= 65 && asciiValue <= 90) && !(asciiValue >= 97 && asciiValue <= 122))
+                    return false;
+            }
+
+            return true;
         }
 
-        static bool validAge(int age)
+        static bool ValidAge(int age)
         {
-            //age must be between 11 and 18 inclusive
 
+            return age >= 11 && age <= 18;
         }
 
-   
         static bool ValidPassword(string password)
         {
-            // Check password is at least 8 characters in length
 
+            if (password.Length < 8)
+                return false;
 
-            // Check password contains a mix of lower case, upper case and non letter characters
-            // QWErty%^& = valid
-            // QWERTYUi = not valid
-            // ab£$%^&* = not valid
-            // QWERTYu! = valid
+            bool hasUpperCase = false;
+            bool hasLowerCase = false;
+            bool hasSpecialChar = false;
 
+            for (int i = 0; i < password.Length; i++)
+            {
+                int asciiValue = Convert.ToInt32(password[i]);
 
-            // Check password contains no runs of more than 2 consecutive or repeating letters or numbers
-            // AAbbdd!2 = valid (only 2 consecutive letters A and B and only 2 repeating of each)
-            // abC461*+ = not valid (abC are 3 consecutive letters)
-            // 987poiq! = not valid (987 are consecutive)
+                if (asciiValue >= 65 && asciiValue <= 90)
+                    hasUpperCase = true; 
 
+                if (asciiValue >= 97 && asciiValue <= 122)
+                    hasLowerCase = true; 
 
+                if ((asciiValue >= 33 && asciiValue <= 47) || 
+                    (asciiValue >= 58 && asciiValue <= 64) ||  
+                    (asciiValue >= 91 && asciiValue <= 96) ||  
+                    (asciiValue >= 123 && asciiValue <= 126))  
+                    hasSpecialChar = true; 
 
+    
+                if (i >= 2)
+                {
+                    int prevAscii1 = Convert.ToInt32(password[i - 1]);
+                    int prevAscii2 = Convert.ToInt32(password[i - 2]);
+
+           
+                    if ((asciiValue == prevAscii1 + 1 && prevAscii1 == prevAscii2 + 1) ||
+                        (asciiValue == prevAscii1 && prevAscii1 == prevAscii2))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+        
+            return hasUpperCase && hasLowerCase && hasSpecialChar;
         }
-        static bool validEmail(string email)
-        {
-            // a valid email address
-            // has at least 2 characters followed by an @ symbol
-            // has at least 2 characters followed by a .
-            // has at least 2 characters after the .
-            // contains only one @ and any number of .
-            // does not contain any other non letter or number characters
 
+        static bool ValidEmail(string email)
+        {
+
+
+            int atIndex = email.IndexOf('@');
+            int dotIndex = email.LastIndexOf('.');
+
+            if (atIndex == -1 || dotIndex == -1 || atIndex >= dotIndex)
+                return false;
+
+          
+            if (atIndex < 2 || (dotIndex - atIndex) < 3 || (email.Length - dotIndex) < 3)
+                return false;
+
+        
+            foreach (char c in email)
+            {
+                int asciiValue = Convert.ToInt32(c);
+
+                if (!((asciiValue >= 65 && asciiValue <= 90) ||   
+                      (asciiValue >= 97 && asciiValue <= 122) ||  
+                      (asciiValue >= 48 && asciiValue <= 57) ||
+                      c == '@' || c == '.'))                        
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
-        static string createUserName(string firstName, string lastName, int age)
+
+        static string CreateUserName(string firstName, string lastName, int age)
         {
-            // username is made up from:
-            // first two characters of first name
-            // last two characters of last name
-            // age
-            //e.g. Bob Smith aged 34 would have the username Both34
-
-
-
+            string username = firstName.Substring(0, 2) + lastName.Substring(lastName.Length - 2) + age;
+            return username;
         }
 
     }
